@@ -4,7 +4,7 @@ package rewards;
  * A summary of a confirmed reward transaction describing a contribution made to an account that was distributed among
  * the account's beneficiaries.
  */
-public class RewardConfirmation {
+public class   RewardConfirmation {
 
 	private String confirmationNumber;
 
