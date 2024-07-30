@@ -2,7 +2,15 @@ package rewards;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 // TODO-00 : In this lab, you are going to exercise the following:
 // - Understanding how auto-configuration is triggered in Spring Boot application
@@ -35,14 +43,27 @@ import org.springframework.boot.SpringApplication;
 // TODO-13 (Optional) : Follow the instruction in the lab document.
 //           The section titled "Build and Run using Command Line tools".
 
+@SpringBootApplication
+@EnableConfigurationProperties(RewardsRecipientProperties.class)
+
 public class RewardsApplication {
-    static final String SQL = "SELECT count(*) FROM T_ACCOUNT";
+
 
     final Logger logger
             = LoggerFactory.getLogger(RewardsApplication.class);
 
-    public static void main(String[] args) {
-        SpringApplication.run(RewardsApplication.class, args);
+    public static void main(String[] args) {SpringApplication.run(RewardsApplication.class, args);}
+
+    @Bean
+    CommandLineRunner runner ( JdbcTemplate jdbcTemplate) {
+        final String SQL = "SELECT count(*) FROM T_ACCOUNT";
+        Long numberOfAccounts = jdbcTemplate.queryForObject(SQL, Long.class);
+        return args -> logger.info("Number of accounts: " + numberOfAccounts);
+    }
+
+    @Bean
+    CommandLineRunner commandLineRunner(RewardsRecipientProperties rewardsRecipientProperties){
+        return args -> System.out.println("Recipient: " + rewardsRecipientProperties.getName());
     }
 
     // TODO-04 : Let Spring Boot execute database scripts
